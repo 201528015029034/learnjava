@@ -1,4 +1,4 @@
-package dailylearning.apis;
+package apis;
 
 import org.junit.jupiter.api.Test;
 
