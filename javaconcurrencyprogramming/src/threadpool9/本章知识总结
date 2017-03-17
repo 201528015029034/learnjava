@@ -1,0 +1,51 @@
+Java中的线程池
+本章介绍了线程的实现原理和Java中的线程池使用方式。
+1. 是什么？
+线程池预先创建了若干数量的线程，并且不能由用户直接对线程的创建进行控制，通过重复使用固定或较为固定数目的线程来
+完成任务的执行。
+优势：
+a.降低资源消耗，通过重复使用已创建的线程减低线程创建和销毁造成的消耗。
+b.提高响应速度，当任务到达时，不需要等到线程创建就能理解立即执行。
+c.提高线程的可管理型，使用线程池可以对线程进行统一分配、调优和监控。
+
+2. 为什么？
+服务端程序经常面对客户端提交的短小任务，如果每接到一个任务就创建一个线程，那就会创建大量的线程，一方面线程是稀缺
+资源，线程的创建和消亡都需要耗费系统资源，另一方面，操作系统会频繁的进行线程上下文切换，增加系统负载。
+使用线程池可以避免这些问题。
+
+3. 怎么办？
+a.实现原理
+首先，我们来看几个概念：
+    任务：用户提交的Runnable或Callable对象，让线程池运行。
+    工作者线程(Worker)：线程池创建的线程都会封装成工作者线程，用于运行任务。
+然后，我们来看线程池的工作过程：
+    ① 线程池判断当前运行的线程数量是否小于corePoolSize，如果不是，创建新线程来执行任务（需要获取全局锁），是则②
+    ② 线程池判断任务队列是否已满，如果没有，将新提交的任务加入任务队列，满了③
+    ③ 线程池判断若创建新的线程是否达到maximumPoolSize,如果没有，则创建新的线程执行任务（需要获取全局锁），有则④
+    ④ 线程池使用饱和策略RejectedExecutionHandler.rejectedExecution()处理新来的任务
+
+b.使用线程池
+①创建线程池
+     new ThreadPoolExecutor(corePoolSize, maximumPoolSize, keepAliveTime, milliseconds, runnableTaskQueue, handler)
+     * corePoolSize:核心线程的数量，当线程池的线程的数量小于corePoolSize时，每来一个任务就会新建一个线程运行任务，
+     *              直到线程数量达到corePoolSize。也可以通过线程池的prestartAllCoreThreads()预先创建并启动全部线程。
+     * maximumPoolSize: 线程池支持的最大线程的数量，注意这里不是限制任务的数量，而是限制工作者线程Worker的数量。
+     *                  如果任务队列满了，并且已创建的线程数小于maximumPoolSize,那线程池就会新建工作者线程，那也
+     *                  就是说这个参数对于无界的任务队列没有效果。
+     * keepAliveTime: 线程池的工作线程空闲后，保证存活的时间。
+     * runnableTaskQueue: 任务队列，用于保存等待执行的任务的阻塞队列（blockingQueue）,常用的有：
+     *                    ArrayBlockingQueue: 基于数组，有界，FIFO
+     *                    LinkedBlockingQueue: 基于链表，吞吐量高于ArrayBlockingQueue，FixedThreadPool用的这个，FIFO
+     *                    SynchronousQueue: 不存储元素，每个插入操作要阻塞到有其他线程调用移除操作，吞吐量高于
+     *                                      LinkedBlockingQueue，CachedThreadPool用的这个
+     *                    PriorityBlockingQueue: 优先级，无界
+     * handler: RejectedExecutionHandler(饱和策略)：当任务队列和线程池都满了，饱和状态，用于处理新提交任务的策略，有：
+     *          AbortPolicy: 直接抛出异常，默认策略
+     *          CallerRunsPolicy: 只用调用者所在线程来运行任务
+     *          DiscardOldestPolicy: 丢弃队列里最近的一个任务，并执行当前任务
+     *          DiscardPolicy: 不处理，不丢弃
+②提交任务
+     threadPool.execute(new Runnable() {...});
+     Future<Object> future = threadPool.submit(new Callable() {...});
+③关闭线程池
+
