@@ -2,10 +2,7 @@ package threadpool9;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 /**
  * Created by silence on 2017/3/14.
@@ -38,7 +35,8 @@ public class TestThreadPoolExecutor {
     public void testThreadPoolExecutor() throws InterruptedException {
         CountDownLatch c = new CountDownLatch(2);
         ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
-                5, 10, 60, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+                5, 10, 60,
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
         threadPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -61,5 +59,30 @@ public class TestThreadPoolExecutor {
         System.out.println("finished");
     }
 
+    @Test
+    public void testFuture() {
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(
+                5, 10, 60,
+                TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable>());
+
+        Future<Object> result = threadPool.submit(new Callable<Object>(
+
+        ) {
+            @Override
+            public Object call() throws Exception {
+                return new Integer(1);
+            }
+        });
+        try {
+            Object obj = result.get();
+            System.out.println(((Integer)obj).intValue());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            threadPool.shutdown();
+        }
+    }
 
 }
