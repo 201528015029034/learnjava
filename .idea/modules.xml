@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/dailylearning/dailylearning.iml" filepath="$PROJECT_DIR$/dailylearning/dailylearning.iml" />
+      <module fileurl="file://$PROJECT_DIR$/javaconcurrencyprogramming/javaconcurrencyprogramming.iml" filepath="$PROJECT_DIR$/javaconcurrencyprogramming/javaconcurrencyprogramming.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/learnjava.iml" filepath="$PROJECT_DIR$/.idea/learnjava.iml" />
+      <module fileurl="file://$PROJECT_DIR$/thinkinginjava/thinkinginjava.iml" filepath="$PROJECT_DIR$/thinkinginjava/thinkinginjava.iml" />
     </modules>
   </component>
 </project>
