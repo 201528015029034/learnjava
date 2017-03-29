@@ -1,0 +1,67 @@
+Java中的13个原子操作类
+本章主要介绍了java.util.concurrent.atomic包下的4种类型的原子更新方式，分别为原子更新基本类型、
+原子更新数组、原子更新引用类型、原子更新字段类，总共包含12个类。这些类都是使用Unsafe实现的包装类。
+
+1.内容概要
+(1)原子更新基本类型
+    AtomicInteger：原子更新整型
+    AtomicBoolean：原子更新布尔类型
+    AtomicLong：原子更新长整型
+(2)原子更新数组
+    AtomicIntegerArray：原子更新整型数组里的元素
+    AtomicLongArray：原子更新长整形数组里的元素
+    AtomicReferenceArray：原子更新引用类型数组里的元素
+(3)原子更新引用类型
+    AtomicReference：原子更新引用类型
+    AtomicReferenceFieldUpdater：原子更新引用类型里的字段
+    AtomicMarkableReference：原子更新带有标记位的引用类型
+(4)原子更新字段类
+    AtomicIntegerFieldUpdater：原子更新整型的字段的更新器
+    AtomicLongFieldUpdater：原子更新长整形字段的更新器
+    AtomicStampedReference：原子更新带有版本号的引用类型，可以解决CAS可能出现的ABA问题
+
+2.详细介绍(以每种类型的第一个为例)
+(1) AtomicInteger：原子更新整形
+    * 使用方式：
+    * ①创建：AtomicInteger ai = new AtomicInteger(int initialValue) 参数initialValue代表初始值
+    * ②使用：ai.getAndIncrement()
+    * 主要API包含：
+    *         get()
+    *         getAndIncrement()
+    *         getAndSet(int newValue)
+    *         addAndGet(int delta)：原子增加delta
+    *         compareAndSet(int expect, int update)
+    *         lazySet(int newValue)：其他线程短时间内还是可以读到旧的值
+(2) AtomicIntegerArray：原子更新整形数组里的元素
+    * 使用方式：
+    * ①创建：AtomicIntegerArray ai = new AtomicIntegerArray(int[] array) 参数array代表初始化数组
+    * ②使用：ai.addAndGet(int i, int delta)
+    * 主要API包含：
+    *      get(int i)
+    *      getAndSet(int i, int val)
+    *      addAndGet(int i, int delta)
+    *      compareAndSet(int i, int expect, int update)
+(3) AtomicReference：原子更新引用类型
+    * 使用方式：
+    * ①创建：对V类型的引用进行更新
+    *         AtomicReference<V> ar = new AtomicReference<V>();
+    * ②使用：ar.set(V v)
+    *         ar.compareAndSet(V v1, V v2)
+    * 主要API包含：
+    *      get()：返回封装的对象
+    *      set(V v)：设置封装的对象
+    *      compareAndSet(V v1, V v2)
+    *      getAndSet(V v1):
+(4) AtomicIntegerFieldUpdater：原子更新字段类型
+    使用方式：
+    * ①创建：对V类的e属性字段进行更新，这里要注意V类的e属性字段必要使用public volatile修饰符，还有
+    *         因为是Integer字段的更新器，这里的e属性必须是Integer类型
+    *         AtomicIntegerFieldUpdater<V> ai =
+    *                    AtomicIntegerFieldUpdater.newUpdater(V.class, int e);
+    * ②使用：ai.getAndIncrement(V v)
+    * 主要API如下：
+    *      get(V v)：获得v对象的更新属性字段值
+    *      getAndIncrement(V v)：对v对象的更新字段属性加1
+    *      getAndDecrement(V v)：对v对象的更新字段属性减1
+    *      getAndSet(V v, int e)
+*      compareAndSet(V v, int expect, int update)
